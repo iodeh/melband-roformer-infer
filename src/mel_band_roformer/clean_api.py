@@ -153,6 +153,7 @@ class MelBandRoformerSession:
         *,
         store_dir: str | Path = "outputs",
         verbose: bool = False,
+        output_format: str = "wav_float32",
     ) -> "OutputManifest":
         if self._status != "ready" or self._model is None:
             raise RuntimeError(
@@ -166,6 +167,7 @@ class MelBandRoformerSession:
             Namespace(input_folder=Path(input_folder), store_dir=Path(store_dir)),
             self._config,
             verbose=verbose,
+            output_format=output_format,
         )
 
     def _ensure_backend(self):
@@ -267,8 +269,14 @@ class MelBandRoformerSeparator:
         *,
         store_dir: str | Path = "outputs",
         verbose: bool = False,
+        output_format: str = "wav_float32",
     ) -> "OutputManifest":
-        return self.session.infer(input_folder, store_dir=store_dir, verbose=verbose)
+        return self.session.infer(
+            input_folder,
+            store_dir=store_dir,
+            verbose=verbose,
+            output_format=output_format,
+        )
 
 
 def separate_folder(input_folder, **kwargs):
@@ -291,4 +299,5 @@ def separate_folder(input_folder, **kwargs):
     return MelBandRoformerSeparator(**allowed).session.infer(
         input_folder,
         store_dir=kwargs.get("store_dir", "outputs"),
+        output_format=kwargs.get("output_format", "wav_float32"),
     )
